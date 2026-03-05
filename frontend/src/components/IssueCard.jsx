@@ -58,7 +58,7 @@ const IssueCard = ({ issue, onUpvote }) => {
             <article className="card issue-card">
                 {issue.imageUrl && (
                     <div className="issue-card-img">
-                        <img src={`http://localhost:8080${issue.imageUrl}`} alt={issue.title}
+                        <img src={issue.imageUrl?.startsWith('http') ? issue.imageUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}${issue.imageUrl}`} alt={issue.title}
                             onError={e => { e.target.style.display = 'none'; }} />
                     </div>
                 )}
