@@ -98,7 +98,7 @@ const IssueDetail = () => {
                 <div className="card" style={{ padding: 32 }}>
                     {/* Image */}
                     {issue.imageUrl && (
-                        <img src={`http://localhost:8080${issue.imageUrl}`} alt={issue.title}
+                        <img src={issue.imageUrl?.startsWith('http') ? issue.imageUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}${issue.imageUrl}`} alt={issue.title}
                             style={{ width: '100%', maxHeight: 400, objectFit: 'cover', borderRadius: 12, marginBottom: 24 }} />
                     )}
 
@@ -128,7 +128,7 @@ const IssueDetail = () => {
                     {issue.resolutionImageUrl && (
                         <div style={{ marginBottom: 24, padding: 20, background: 'rgba(52,211,153,0.07)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 12 }}>
                             <h3 style={{ color: '#34d399', marginBottom: 12 }}>✅ Resolution Proof</h3>
-                            <img src={`http://localhost:8080${issue.resolutionImageUrl}`} alt="Resolution proof"
+                            <img src={issue.resolutionImageUrl?.startsWith('http') ? issue.resolutionImageUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}${issue.resolutionImageUrl}`} alt="Resolution proof"
                                 style={{ width: '100%', maxHeight: 360, objectFit: 'cover', borderRadius: 10 }} />
                         </div>
                     )}
