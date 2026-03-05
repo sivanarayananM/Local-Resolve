@@ -14,9 +14,9 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seedAdminUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            if (userRepository.findByEmail("admin@localresolve.com").isEmpty()) {
+            if (!userRepository.existsByEmail("admin@localresolve.com")) {
                 User admin = User.builder()
-                        .fullName("Admin")
+                        .name("Admin")
                         .email("admin@localresolve.com")
                         .password(passwordEncoder.encode("admin123"))
                         .role(Role.ADMIN)
