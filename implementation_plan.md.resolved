@@ -1,0 +1,299 @@
+# Local Resolve – Community Issue Reporting & Resolution System
+
+A full-stack web application that lets citizens report local civic problems (potholes, broken streetlights, garbage overflow, water leakage, etc.) and allows administrators to track, assign, and resolve them. Inspired by [Civix](https://github.com/HarshS16/Civix), adapted to use **Spring Boot + Java + MySQL + React**.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Java 17, Spring Boot 3.x, Spring Security, Spring Data JPA |
+| Authentication | JWT (JSON Web Tokens) |
+| Database | MySQL 8.x |
+| File Storage | Local filesystem (Spring multipart) |
+| Frontend | React 18, React Router v6, Axios |
+| Styling | Vanilla CSS (custom design system) |
+| Build Tool | Maven (backend), Vite (frontend) |
+| API Docs | Springdoc OpenAPI (Swagger UI) |
+
+---
+
+## Project Structure
+
+```
+Local Resolve/
+├── backend/                        # Spring Boot application
+│   ├── src/main/java/com/localresolve/
+│   │   ├── LocalResolveApplication.java
+│   │   ├── config/
+│   │   │   ├── SecurityConfig.java
+│   │   │   ├── JwtConfig.java
+│   │   │   └── CorsConfig.java
+│   │   ├── controller/
+│   │   │   ├── AuthController.java
+│   │   │   ├── IssueController.java
+│   │   │   ├── AdminController.java
+│   │   │   └── UserController.java
+│   │   ├── service/
+│   │   │   ├── AuthService.java
+│   │   │   ├── IssueService.java
+│   │   │   ├── UserService.java
+│   │   │   └── FileStorageService.java
+│   │   ├── repository/
+│   │   │   ├── UserRepository.java
+│   │   │   ├── IssueRepository.java
+│   │   │   └── CommentRepository.java
+│   │   ├── model/
+│   │   │   ├── User.java
+│   │   │   ├── Issue.java
+│   │   │   ├── Comment.java
+│   │   │   └── enums/ (Role.java, IssueStatus.java, IssueCategory.java)
+│   │   ├── dto/
+│   │   │   ├── auth/ (LoginRequest, RegisterRequest, AuthResponse)
+│   │   │   ├── issue/ (IssueRequest, IssueResponse, IssueUpdateRequest)
+│   │   │   └── user/ (UserResponse, UserProfileUpdate)
+│   │   ├── security/
+│   │   │   ├── JwtUtil.java
+│   │   │   ├── JwtAuthFilter.java
+│   │   │   └── UserDetailsServiceImpl.java
+│   │   └── exception/
+│   │       ├── GlobalExceptionHandler.java
+│   │       └── custom exceptions
+│   └── src/main/resources/
+│       ├── application.properties
+│       └── uploads/  (image storage)
+│
+└── frontend/                       # React + Vite application
+    ├── src/
+    │   ├── pages/
+    │   │   ├── Home.jsx
+    │   │   ├── Login.jsx
+    │   │   ├── Register.jsx
+    │   │   ├── ReportIssue.jsx
+    │   │   ├── IssueList.jsx
+    │   │   ├── IssueDetail.jsx
+    │   │   ├── Profile.jsx
+    │   │   └── admin/
+    │   │       ├── AdminDashboard.jsx
+    │   │       ├── AdminIssues.jsx
+    │   │       └── AdminUsers.jsx
+    │   ├── components/
+    │   │   ├── Navbar.jsx
+    │   │   ├── Footer.jsx
+    │   │   ├── IssueCard.jsx
+    │   │   ├── StatusBadge.jsx
+    │   │   ├── ImageUpload.jsx
+    │   │   └── ProtectedRoute.jsx
+    │   ├── hooks/
+    │   │   ├── useAuth.js
+    │   │   └── useIssues.js
+    │   ├── api/
+    │   │   ├── axiosConfig.js
+    │   │   ├── authApi.js
+    │   │   ├── issueApi.js
+    │   │   └── adminApi.js
+    │   ├── context/
+    │   │   └── AuthContext.jsx
+    │   ├── utils/
+    │   │   └── helpers.js
+    │   ├── styles/
+    │   │   ├── index.css
+    │   │   ├── variables.css
+    │   │   └── components.css
+    │   ├── App.jsx
+    │   └── main.jsx
+    ├── index.html
+    └── vite.config.js
+```
+
+---
+
+## Database Schema (MySQL)
+
+### `users` table
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK AUTO_INCREMENT | |
+| name | VARCHAR(100) | |
+| email | VARCHAR(150) UNIQUE | |
+| password | VARCHAR(255) | BCrypt hashed |
+| role | ENUM('CITIZEN','ADMIN') | |
+| created_at | TIMESTAMP | |
+
+### `issues` table
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK AUTO_INCREMENT | |
+| title | VARCHAR(200) | |
+| description | TEXT | |
+| category | ENUM('POTHOLE','STREETLIGHT','GARBAGE','WATER_LEAKAGE','OTHER') | |
+| status | ENUM('OPEN','IN_PROGRESS','RESOLVED','REJECTED') | |
+| image_url | VARCHAR(500) | stored path |
+| location | VARCHAR(300) | address string |
+| latitude | DECIMAL(9,6) | optional GPS |
+| longitude | DECIMAL(9,6) | optional GPS |
+| upvotes | INT DEFAULT 0 | |
+| user_id | BIGINT FK → users.id | reporter |
+| assigned_to | BIGINT FK → users.id | admin |
+| created_at | TIMESTAMP | |
+| updated_at | TIMESTAMP | |
+
+### `comments` table
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK AUTO_INCREMENT | |
+| content | TEXT | |
+| issue_id | BIGINT FK → issues.id | |
+| user_id | BIGINT FK → users.id | |
+| created_at | TIMESTAMP | |
+
+---
+
+## Backend API Endpoints
+
+### Auth (`/api/auth`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/register` | Register new citizen | Public |
+| POST | `/login` | Login, returns JWT | Public |
+
+### Issues (`/api/issues`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | List all issues (filterable) | Public |
+| GET | `/{id}` | Get single issue | Public |
+| POST | `/` | Submit new issue + image | Citizen |
+| PUT | `/{id}/upvote` | Upvote an issue | Citizen |
+| GET | `/my` | Get current user's issues | Citizen |
+| DELETE | `/{id}` | Delete own issue | Citizen/Admin |
+
+### Admin (`/api/admin`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/issues` | All issues with filters | Admin |
+| PUT | `/issues/{id}/status` | Update issue status | Admin |
+| PUT | `/issues/{id}/assign` | Assign to admin | Admin |
+| POST | `/issues/{id}/comment` | Add resolution comment | Admin |
+| GET | `/stats` | Dashboard statistics | Admin |
+| GET | `/users` | List all users | Admin |
+
+### Files (`/api/files`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/{filename}` | Serve uploaded image | Public |
+
+---
+
+## Frontend Pages & Routes
+
+| Route | Component | Description |
+|---|---|---|
+| `/` | Home | Landing page + featured issues |
+| `/login` | Login | Login form |
+| `/register` | Register | Citizen registration |
+| `/issues` | IssueList | Browse + filter all issues |
+| `/issues/:id` | IssueDetail | Full issue view + comments |
+| `/report` | ReportIssue | Submit a new issue (Citizen) |
+| `/profile` | Profile | View/edit own profile + my issues |
+| `/admin` | AdminDashboard | Admin stats overview |
+| `/admin/issues` | AdminIssues | Manage all issues |
+| `/admin/users` | AdminUsers | View all registered users |
+
+---
+
+## Core Feature Modules
+
+### 1. Authentication & Authorization
+- JWT-based stateless auth via `Spring Security`
+- Roles: `CITIZEN` and `ADMIN`
+- Passwords hashed with BCrypt
+- `@PreAuthorize` annotations on admin endpoints
+- Frontend `AuthContext` + `ProtectedRoute`
+
+### 2. Issue Reporting
+- Form: title, description, category, location (text + optional GPS), image upload
+- Image stored on server filesystem; URL saved in DB
+- Category filter: Pothole, Streetlight, Garbage, Water Leakage, Other
+
+### 3. Issue Tracking (Citizen View)
+- Status: `OPEN → IN_PROGRESS → RESOLVED / REJECTED`
+- Upvoting to surface community-priority issues
+- My Issues page for tracking own reports
+- Real-time status display with colour-coded badges
+
+### 4. Admin Dashboard
+- Card stats: Total, Open, In Progress, Resolved
+- Table of all issues with filter & sort
+- Inline status update dropdown
+- Assign issue to self / other admins
+- Add resolution comments
+
+### 5. File Upload
+- Spring `MultipartFile` API
+- Image saved to `uploads/` directory
+- Served via static resource mapping
+- Frontend drag-and-drop image picker
+
+### 6. Comment/Activity Thread
+- Citizens and admins can comment on issues
+- Shown on IssueDetail page as a thread
+
+---
+
+## Verification Plan
+
+### Backend Verification
+Run Spring Boot app and test via Swagger UI:
+```
+# Start backend
+cd backend
+./mvnw spring-boot:run
+
+# Open Swagger UI
+http://localhost:8080/swagger-ui.html
+```
+
+Test scenarios manually via Swagger:
+1. `POST /api/auth/register` – register a citizen
+2. `POST /api/auth/login` – get JWT token
+3. `POST /api/issues` (with token) – submit issue with image
+4. `GET /api/issues` – verify issue appears
+5. `PUT /api/admin/issues/{id}/status` (admin token) – change status
+6. `GET /api/admin/stats` – verify dashboard stats
+
+### Frontend Verification
+```
+# Start frontend dev server
+cd frontend
+npm run dev
+# Opens at http://localhost:5173
+```
+
+Manual test flows:
+1. Register → Login → Report Issue → check My Issues page
+2. Login as Admin → view Dashboard → update issue status
+3. Browse Issues page → verify filters work
+4. Upload image in report form → verify it shows in detail view
+
+### Database Verification
+```sql
+-- Check tables
+SHOW TABLES;
+SELECT * FROM users;
+SELECT * FROM issues;
+SELECT * FROM comments;
+```
+
+---
+
+## Development Phases
+
+| Phase | Work |
+|---|---|
+| **Phase 1** | Spring Boot project init, DB setup, User entity + Auth (JWT) |
+| **Phase 2** | Issue entity, CRUD APIs, File upload, Admin APIs |
+| **Phase 3** | React project init, Auth pages (Login/Register), Context |
+| **Phase 4** | Issue pages (List, Detail, Report), Admin Dashboard pages |
+| **Phase 5** | Styling (CSS design system), responsive layout |
+| **Phase 6** | Integration testing, bug fixing, cleanup |
