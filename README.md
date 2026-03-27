@@ -8,10 +8,12 @@ With community upvoting, real-time status tracking, and mandatory visual proof f
 🌐 **Live Demo:** [https://sivanarayananm.github.io/Local-Resolve](https://sivanarayananm.github.io/Local-Resolve)
 
 ## ✨ Core Features
-- **Interactive Issue Reporting**: Users can drop precise pins on an interactive map and upload photo evidence.
-- **Community Upvoting Matrix**: Prioritize urgent issues based on community consensus (👍).
-- **Live Status Tracking**: Absolute transparency as issues move from **Open → In Progress → Resolved**.
-- **Admin Analytics Dashboard**: Real-time KPI charts monitoring resolution rates, category breakdowns, and trends over time.
+- **Interactive issue reporting**: map-based pin selection for precise location, plus image upload to attach photo evidence.
+- **Community upvoting**: users can vote on issues so important problems rise to the top.
+- **Live issue tracking**: status updates as reports move through Open → In Progress → Resolved.
+- **Admin analytics**: KPI charts (Key Performance Indicator charts) show metrics like issue volume, resolution rate, category breakdown, and response time.
+- **Role-based access**: admins and citizens have separate dashboards and permissions.
+- **Commenting and collaboration**: users can discuss issues and provide updates on reports.
 
 ## 🛠️ Tech Stack
 * **Frontend**: React.js, Vite, React Router, Recharts, Context API
