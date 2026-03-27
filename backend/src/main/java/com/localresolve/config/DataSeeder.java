@@ -14,18 +14,29 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seedAdminUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            if (!userRepository.existsByEmail("admin@localresolve.com")) {
-                User admin = User.builder()
-                        .name("Admin")
-                        .email("admin@localresolve.com")
-                        .password(passwordEncoder.encode("admin123"))
-                        .role(Role.ADMIN)
-                        .build();
-                userRepository.save(admin);
-                System.out.println("✅ Admin user seeded successfully.");
-            } else {
-                System.out.println("ℹ️ Admin user already exists, skipping seed.");
-            }
+            seedOrPromoteAdmin(userRepository, passwordEncoder, "admin@localresolve.com", "Admin", "admin123");
+            seedOrPromoteAdmin(userRepository, passwordEncoder, "admin2@localresolve.com", "Admin Backup", "Admin@1234");
         };
+    }
+
+    private void seedOrPromoteAdmin(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                                     String email, String name, String rawPassword) {
+        User existing = userRepository.findByEmail(email).orElse(null);
+        if (existing == null) {
+            User admin = User.builder()
+                    .name(name)
+                    .email(email)
+                    .password(passwordEncoder.encode(rawPassword))
+                    .role(Role.ADMIN)
+                    .build();
+            userRepository.save(admin);
+            System.out.println("✅ Admin user seeded: " + email);
+        } else if (existing.getRole() != Role.ADMIN) {
+            existing.setRole(Role.ADMIN);
+            userRepository.save(existing);
+            System.out.println("✅ Promoted existing user to ADMIN: " + email);
+        } else {
+            System.out.println("ℹ️ Admin user already exists: " + email);
+        }
     }
 }
