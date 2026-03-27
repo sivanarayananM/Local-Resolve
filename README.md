@@ -5,7 +5,7 @@ Local Resolve is a full-stack web application designed to empower citizens by al
 
 With community upvoting, real-time status tracking, and mandatory visual proof for resolutions, this platform ensures transparency and accountability between local governments and the public.
 
-![Local Resolve Dashboard Demo](https://via.placeholder.com/800x450/003135/afdde5?text=Local+Resolve+Platform)
+🌐 **Live Demo:** [https://sivanarayananm.github.io/Local-Resolve](https://sivanarayananm.github.io/Local-Resolve)
 
 ## ✨ Core Features
 - **Interactive Issue Reporting**: Users can drop precise pins on an interactive map and upload photo evidence.
