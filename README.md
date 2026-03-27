@@ -7,14 +7,6 @@ With community upvoting, real-time status tracking, and mandatory visual proof f
 
 🌐 **Live Demo:** [https://sivanarayananm.github.io/Local-Resolve](https://sivanarayananm.github.io/Local-Resolve)
 
-## 🚀 Deployment Status
-
-| Component | Platform | URL | Status |
-|-----------|----------|-----|--------|
-| **Frontend** | GitHub Pages | https://sivanarayananm.github.io/Local-Resolve | ✅ Active |
-| **Backend API** | Render | https://local-resolve.onrender.com | ✅ Active |
-| **Database** | Aiven Cloud (MySQL) | Cloud-hosted | ✅ Active |
-
 ## ✨ Core Features
 - **Interactive Issue Reporting**: Users can drop precise pins on an interactive map and upload photo evidence.
 - **Community Upvoting Matrix**: Prioritize urgent issues based on community consensus (👍).
@@ -67,29 +59,6 @@ With community upvoting, real-time status tracking, and mandatory visual proof f
 For testing the dashboard, a default admin account is seeded on startup:
 - **Email:** `admin@localresolve.com`
 - **Password:** `admin123`
-
-## 🌐 Production Deployment Configuration
-
-### Frontend (GitHub Pages)
-- **Repository:** https://github.com/sivanarayananM/Local-Resolve
-- **Branch:** `main` (triggers deployment via GitHub Actions)
-- **Build Tool:** Vite
-- **Base Path:** `/Local-Resolve/`
-- **API Endpoint:** Points to Render backend
-
-### Backend (Render)
-- **Service:** https://local-resolve.onrender.com
-- **Framework:** Spring Boot 3
-- **Database:** Aiven Cloud MySQL
-- **Environment Variables Required:**
-  - `DB_URL`: MySQL connection string (with SSL)
-  - `DB_USER`: Aiven username
-  - `DB_PASS`: Aiven password
-
-### Database (Aiven)
-- **Type:** MySQL 8
-- **Host:** `mysql-3e503883-shivanarayanan9840-08bc.a.aivencloud.com:26764`
-- **SSL Mode:** Required
 
 ## 📜 License
 This project is licensed under the MIT License.
