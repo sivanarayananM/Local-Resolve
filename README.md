@@ -11,8 +11,6 @@ With community upvoting, real-time status tracking, and mandatory visual proof f
 - **Interactive Issue Reporting**: Users can drop precise pins on an interactive map and upload photo evidence.
 - **Community Upvoting Matrix**: Prioritize urgent issues based on community consensus (👍).
 - **Live Status Tracking**: Absolute transparency as issues move from **Open → In Progress → Resolved**.
-- **Admin Verification Protocol**: Authorities are required to upload "Resolution Proof" (Before/After photos) when closing an issue.
-- **Citizen Badges & Reputation**: Users earn gamified titles (e.g., *Community Hero*, *Civic Pioneer*) based on reporting and verification activity.
 - **Admin Analytics Dashboard**: Real-time KPI charts monitoring resolution rates, category breakdowns, and trends over time.
 
 ## 🛠️ Tech Stack
@@ -59,6 +57,3 @@ With community upvoting, real-time status tracking, and mandatory visual proof f
 For testing the dashboard, a default admin account is seeded on startup:
 - **Email:** `admin@localresolve.com`
 - **Password:** `admin123`
-
-## 📜 License
-This project is licensed under the MIT License.
